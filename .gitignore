@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+valhalla_data/
+pgdata/
+*.pbf
+.idea/
+.vscode/
