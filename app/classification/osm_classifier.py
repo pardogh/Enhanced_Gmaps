@@ -49,8 +49,25 @@ def map_surface(surface: str | None) -> tuple[str, int] | None:
 
 
 def estimate_confidence(has_explicit_surface: bool, road_class: str | None) -> float:
-    """Dato esplicito = confidenza alta, dato dedotto = più bassa."""
-    # TODO
+    match road_class:
+        case "highway":
+            return 5
+        case "extraurban":
+            if(has_explicit_surface):
+                return 4 
+            else:
+                return 3 
+        case "rural":
+            if(has_explicit_surface):
+                return 3
+            else:
+                return 2 
+        case "residential":
+            if(has_explicit_surface):
+                return 4
+            else:
+                return 3
+        case 
     pass
 
 # --- 3. IL CLASSIFICATORE ---
@@ -58,6 +75,9 @@ def estimate_confidence(has_explicit_surface: bool, road_class: str | None) -> f
 class OsmRulesClassifier(BaseClassifier):
 
     def classify(self, segment: Segment) -> ClassificationResult | None:
+        
+        
+
         # 1. ricava il tipo di strada da segment.road_class
         #    se non riesci -> return None
         #
