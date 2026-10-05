@@ -1,25 +1,20 @@
 from dataclasses import dataclass
+Coord = tuple[float, float]
 
 @dataclass
 class ValhallaSegment:
+    segment_key: str          # identificatore del pezzo di strada (lo calcola il client)
     way_id: int
-    length: float
-    surface: str | None
+    length: float             # metri
     road_class: str | None
-    start_coord: float 
-    end_coord: float
-    begin_shape_index: int 
-    end_shape_index: int
-    shape: str
+    surface: str | None
+    coords: list[Coord]
     
 @dataclass 
 class ClassifiedSegment:
-    source: str
-    length: float
+    segment: ValhallaSegment  # il pezzo di strada a cui si riferisce il giudizio
+    source: str               # "osm", "ai"...
     road_type: str
     surface_type: str
     condition_score: int
     confidence: float
-    start: tuple[float,float]
-    end: tuple[float,float]
-    segment_key: str
