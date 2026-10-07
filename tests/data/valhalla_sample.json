@@ -1,0 +1,400 @@
+{
+  "units": "kilometers",
+  "shape": "aawzsAwnhsTm@`GMzAW`DY`Dc@xDqCtWqDn^aAhKQnB{AhPw@|IAH]zDa@vEwApPuCp^}@pKi@bGQhB}@`J_AUeDw@qBg@oG}AmAWRkCHaBP}Fj@s[VwX^e[LmCDg@Hw@pB}Su@IoDe@aIoAUo@f@cJSg@aGmBuC_A_Ac@i@WqH_CsEcAWIw@IgB@cBZXeDHe@bCuUzDeZaAa@kEoAeASu@K{Gs@sC[oASeIoAo@MMt@e@lAiAKcIo@{EQaMc@i@ChBca@Bs@PmCDe@Dg@X}Dr@sLNwCh@uORkFjAkT^sFr@mIRcBFi@LyAvBmUFuALuAdBsNrEwZR{ALcBnD}ZLcAn@{CpJq]{`@gXoMo@gEnAmBb@qAN_@?k@KgAo@iEkDe@[yuBwnAm@_@}D_Ct@yEb@oCdAoGN{@vDsJtAaJZqBl@aE",
+  "edges": [
+    {
+      "way_id": 32479333,
+      "surface": "paved",
+      "end_shape_index": 2,
+      "begin_shape_index": 0,
+      "road_class": "tertiary",
+      "length": 0.014
+    },
+    {
+      "way_id": 32479333,
+      "surface": "paved",
+      "end_shape_index": 6,
+      "begin_shape_index": 2,
+      "road_class": "tertiary",
+      "length": 0.053
+    },
+    {
+      "way_id": 32479333,
+      "surface": "paved",
+      "end_shape_index": 7,
+      "begin_shape_index": 6,
+      "road_class": "tertiary",
+      "length": 0.041
+    },
+    {
+      "way_id": 32479333,
+      "surface": "paved",
+      "end_shape_index": 8,
+      "begin_shape_index": 7,
+      "road_class": "tertiary",
+      "length": 0.016
+    },
+    {
+      "way_id": 32479333,
+      "surface": "paved",
+      "end_shape_index": 9,
+      "begin_shape_index": 8,
+      "road_class": "tertiary",
+      "length": 0.005
+    },
+    {
+      "way_id": 974953349,
+      "surface": "paved",
+      "end_shape_index": 12,
+      "begin_shape_index": 9,
+      "road_class": "tertiary",
+      "length": 0.037
+    },
+    {
+      "way_id": 974953349,
+      "surface": "paved",
+      "end_shape_index": 13,
+      "begin_shape_index": 12,
+      "road_class": "tertiary",
+      "length": 0.008
+    },
+    {
+      "way_id": 974953349,
+      "surface": "paved",
+      "end_shape_index": 14,
+      "begin_shape_index": 13,
+      "road_class": "tertiary",
+      "length": 0.009
+    },
+    {
+      "way_id": 205409334,
+      "surface": "paved",
+      "end_shape_index": 20,
+      "begin_shape_index": 14,
+      "road_class": "tertiary",
+      "length": 0.109
+    },
+    {
+      "way_id": 23276047,
+      "surface": "paved",
+      "end_shape_index": 22,
+      "begin_shape_index": 20,
+      "road_class": "residential",
+      "length": 0.013
+    },
+    {
+      "way_id": 23276047,
+      "surface": "paved",
+      "end_shape_index": 25,
+      "begin_shape_index": 22,
+      "road_class": "residential",
+      "length": 0.027
+    },
+    {
+      "way_id": 23276054,
+      "surface": "paved",
+      "end_shape_index": 30,
+      "begin_shape_index": 25,
+      "road_class": "residential",
+      "length": 0.089
+    },
+    {
+      "way_id": 23276054,
+      "surface": "paved",
+      "end_shape_index": 32,
+      "begin_shape_index": 30,
+      "road_class": "residential",
+      "length": 0.041
+    },
+    {
+      "way_id": 1449664327,
+      "surface": "paved",
+      "end_shape_index": 33,
+      "begin_shape_index": 32,
+      "road_class": "service_other",
+      "length": 0.002
+    },
+    {
+      "way_id": 1449664327,
+      "surface": "paved",
+      "end_shape_index": 34,
+      "begin_shape_index": 33,
+      "road_class": "service_other",
+      "length": 0.002
+    },
+    {
+      "way_id": 1449664327,
+      "surface": "paved",
+      "end_shape_index": 35,
+      "begin_shape_index": 34,
+      "road_class": "service_other",
+      "length": 0.027
+    },
+    {
+      "way_id": 231264669,
+      "surface": "paved",
+      "end_shape_index": 36,
+      "begin_shape_index": 35,
+      "road_class": "service_other",
+      "length": 0.003
+    },
+    {
+      "way_id": 231264668,
+      "surface": "paved",
+      "end_shape_index": 37,
+      "begin_shape_index": 36,
+      "road_class": "service_other",
+      "length": 0.01
+    },
+    {
+      "way_id": 1221554072,
+      "surface": "paved",
+      "end_shape_index": 38,
+      "begin_shape_index": 37,
+      "road_class": "service_other",
+      "length": 0.018
+    },
+    {
+      "way_id": 1221554071,
+      "surface": "paved",
+      "end_shape_index": 41,
+      "begin_shape_index": 38,
+      "road_class": "service_other",
+      "length": 0.018
+    },
+    {
+      "way_id": 32242822,
+      "surface": "paved_rough",
+      "end_shape_index": 45,
+      "begin_shape_index": 41,
+      "road_class": "service_other",
+      "length": 0.03
+    },
+    {
+      "way_id": 32242822,
+      "surface": "paved_rough",
+      "end_shape_index": 47,
+      "begin_shape_index": 45,
+      "road_class": "service_other",
+      "length": 0.03
+    },
+    {
+      "way_id": 32242822,
+      "surface": "paved_rough",
+      "end_shape_index": 48,
+      "begin_shape_index": 47,
+      "road_class": "service_other",
+      "length": 0.001
+    },
+    {
+      "way_id": 32242822,
+      "surface": "paved_rough",
+      "end_shape_index": 51,
+      "begin_shape_index": 48,
+      "road_class": "service_other",
+      "length": 0.015
+    },
+    {
+      "way_id": 148843978,
+      "surface": "paved",
+      "end_shape_index": 55,
+      "begin_shape_index": 51,
+      "road_class": "residential",
+      "length": 0.074
+    },
+    {
+      "way_id": 1458171117,
+      "surface": "paved",
+      "end_shape_index": 58,
+      "begin_shape_index": 55,
+      "road_class": "service_other",
+      "length": 0.02
+    },
+    {
+      "way_id": 1458171117,
+      "surface": "paved",
+      "end_shape_index": 64,
+      "begin_shape_index": 58,
+      "road_class": "service_other",
+      "length": 0.053
+    },
+    {
+      "way_id": 34561182,
+      "surface": "paved",
+      "end_shape_index": 66,
+      "begin_shape_index": 64,
+      "road_class": "service_other",
+      "length": 0.006
+    },
+    {
+      "way_id": 34561096,
+      "surface": "paved",
+      "end_shape_index": 71,
+      "begin_shape_index": 66,
+      "road_class": "service_other",
+      "length": 0.062
+    },
+    {
+      "way_id": 23189390,
+      "surface": "paved",
+      "end_shape_index": 73,
+      "begin_shape_index": 71,
+      "road_class": "residential",
+      "length": 0.046
+    },
+    {
+      "way_id": 23189390,
+      "surface": "paved",
+      "end_shape_index": 75,
+      "begin_shape_index": 73,
+      "road_class": "residential",
+      "length": 0.007
+    },
+    {
+      "way_id": 455333853,
+      "surface": "paved",
+      "end_shape_index": 77,
+      "begin_shape_index": 75,
+      "road_class": "residential",
+      "length": 0.009
+    },
+    {
+      "way_id": 455333853,
+      "surface": "paved",
+      "end_shape_index": 78,
+      "begin_shape_index": 77,
+      "road_class": "residential",
+      "length": 0.018
+    },
+    {
+      "way_id": 455333853,
+      "surface": "paved",
+      "end_shape_index": 82,
+      "begin_shape_index": 78,
+      "road_class": "residential",
+      "length": 0.064
+    },
+    {
+      "way_id": 455333853,
+      "surface": "paved",
+      "end_shape_index": 83,
+      "begin_shape_index": 82,
+      "road_class": "residential",
+      "length": 0.01
+    },
+    {
+      "way_id": 455333853,
+      "surface": "paved",
+      "end_shape_index": 85,
+      "begin_shape_index": 83,
+      "road_class": "residential",
+      "length": 0.018
+    },
+    {
+      "way_id": 455333853,
+      "surface": "paved",
+      "end_shape_index": 87,
+      "begin_shape_index": 85,
+      "road_class": "residential",
+      "length": 0.005
+    },
+    {
+      "way_id": 455333853,
+      "surface": "paved",
+      "end_shape_index": 88,
+      "begin_shape_index": 87,
+      "road_class": "residential",
+      "length": 0.029
+    },
+    {
+      "way_id": 455333853,
+      "surface": "paved",
+      "end_shape_index": 93,
+      "begin_shape_index": 88,
+      "road_class": "residential",
+      "length": 0.069
+    },
+    {
+      "way_id": 23189293,
+      "surface": "paved_smooth",
+      "end_shape_index": 95,
+      "begin_shape_index": 93,
+      "road_class": "residential",
+      "length": 0.041
+    },
+    {
+      "way_id": 23189293,
+      "surface": "paved_smooth",
+      "end_shape_index": 98,
+      "begin_shape_index": 95,
+      "road_class": "residential",
+      "length": 0.053
+    },
+    {
+      "way_id": 23218805,
+      "surface": "paved_smooth",
+      "end_shape_index": 99,
+      "begin_shape_index": 98,
+      "road_class": "residential",
+      "length": 0.068
+    },
+    {
+      "way_id": 32210267,
+      "surface": "paved_smooth",
+      "end_shape_index": 100,
+      "begin_shape_index": 99,
+      "road_class": "residential",
+      "length": 0.026
+    },
+    {
+      "way_id": 32210267,
+      "surface": "paved_smooth",
+      "end_shape_index": 108,
+      "begin_shape_index": 100,
+      "road_class": "residential",
+      "length": 0.047
+    },
+    {
+      "way_id": 32210212,
+      "surface": "paved_smooth",
+      "end_shape_index": 110,
+      "begin_shape_index": 108,
+      "road_class": "residential",
+      "length": 0.237
+    },
+    {
+      "way_id": 32210212,
+      "surface": "paved_smooth",
+      "end_shape_index": 111,
+      "begin_shape_index": 110,
+      "road_class": "residential",
+      "length": 0.012
+    },
+    {
+      "way_id": 1070362289,
+      "surface": "paved_smooth",
+      "end_shape_index": 112,
+      "begin_shape_index": 111,
+      "road_class": "tertiary",
+      "length": 0.009
+    },
+    {
+      "way_id": 1070362289,
+      "surface": "paved_smooth",
+      "end_shape_index": 115,
+      "begin_shape_index": 112,
+      "road_class": "tertiary",
+      "length": 0.02
+    },
+    {
+      "way_id": 450836906,
+      "surface": "paved_smooth",
+      "end_shape_index": 119,
+      "begin_shape_index": 115,
+      "road_class": "tertiary",
+      "length": 0.045,
+      "target_percent_along": 0.556
+    }
+  ],
+  "alternate_paths": []
+}
