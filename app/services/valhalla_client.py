@@ -28,7 +28,6 @@ def call_trace_attributes(points: list[tuple[float, float]]) -> dict:
     if not points:
         return None
 
-
     shape=[]
     for lat,lon in points:
         shape.append({"lat": lat, "lon": lon})

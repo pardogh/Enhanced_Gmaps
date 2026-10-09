@@ -62,7 +62,7 @@ def estimate_confidence(has_explicit_surface: bool, road_type: Optional[str]) ->
 
 class OsmRulesClassifier(BaseClassifier):
 
-    def classify(self, segment: ValhallaSegment) -> ClassifiedSegment | None:
+    def classify(self, segment: ValhallaSegment) -> Optional[ClassifiedSegment]:
         # Segment Class
         road_type = map_road_type(segment.road_class)
         if segment.road_class is None:

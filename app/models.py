@@ -18,3 +18,10 @@ class ClassifiedSegment:
     surface_type: str
     condition_score: int
     confidence: float
+
+@dataclass 
+class GoogleMapsRoute:
+    polyline: str
+    points_list: list[tuple[float,float]]
+    duration: str 
+    distance_meters: float
