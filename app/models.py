@@ -21,7 +21,7 @@ class ClassifiedSegment:
 
 @dataclass 
 class GoogleMapsRoute:
-    polyline: str
-    points_list: list[tuple[float,float]]
-    duration: str 
+    polyline: str            # codificata a precisione 5(valhalla è a 6)
+    points_list: list[Coord] 
+    duration_s: str 
     distance_meters: float

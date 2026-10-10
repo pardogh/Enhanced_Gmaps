@@ -1,7 +1,10 @@
-import googlemaps 
+import time 
+
 import requests
-import pandas
 from app.models import GoogleMapsRoute
+import googlemaps
+import polyline
+
 from os import getenv
 from dotenv import load_dotenv
 
@@ -16,6 +19,10 @@ def get_latitude(geocode_result):
 def get_longitude(geocode_result):
     return geocode_result[0]['geometry']['location']['lng'] if geocode_result else None
 
+def parse_durationString(duration: str):
+    # Se volessi ottenere direttamente tempo in Ore:Minuti:Secondi -> time.strftime('%H:%M:%S', time.gmtime(duration.removesuffix("s")))
+    return duration.removesuffix("s")
+    
 
 def get_gmaps_routes(starting_point: str, destination_point: str, avoidTolls: bool) -> dict:
     
@@ -55,4 +62,15 @@ def get_gmaps_routes(starting_point: str, destination_point: str, avoidTolls: bo
     return response.json()
 
 def parse_routes(routes_json: dict) -> list[GoogleMapsRoute]:
-    
+    gmaps_routes = []
+
+    for route in routes_json.get("routes",[]):
+        distance = route["distanceMeters"]
+        duration = parse_durationString(route["duration"])
+        poly = route["polyline"]["encodedPolyline"]
+        points_list = polyline.decode(poly,precision=5)
+
+        gmaps_routes.append(GoogleMapsRoute(polyline=poly,points_list=points_list,duration_s=duration,distance_meters=distance))
+
+    return gmaps_routes
+
