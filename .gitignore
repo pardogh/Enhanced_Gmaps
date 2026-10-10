@@ -7,3 +7,4 @@ pgdata/
 *.pbf
 .idea/
 .vscode/
+.tests/data
