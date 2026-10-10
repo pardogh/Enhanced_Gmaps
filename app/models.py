@@ -24,4 +24,14 @@ class GoogleMapsRoute:
     polyline: str            # codificata a precisione 5(valhalla è a 6)
     points_list: list[Coord] 
     duration_s: str 
-    distance_meters: float
+    distance_m: float
+
+@dataclass 
+class RouteSummary:
+    polyline: str
+    duration_s: str
+    distance_m: float
+    quality_score: float
+    distance_per_road_type: dict 
+    distance_per_road_surface: dict 
+    classifiedSegment_list: list[ClassifiedSegment]

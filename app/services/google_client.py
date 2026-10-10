@@ -12,13 +12,6 @@ load_dotenv()
 
 ROUTES_URL="https://routes.googleapis.com/directions/v2:computeRoutes"
 
-def get_latitude(geocode_result):
-    '''Returns latitude of '''
-    return geocode_result[0]['geometry']['location']['lat'] if geocode_result else None
-
-def get_longitude(geocode_result):
-    return geocode_result[0]['geometry']['location']['lng'] if geocode_result else None
-
 def parse_durationString(duration: str):
     # Se volessi ottenere direttamente tempo in Ore:Minuti:Secondi -> time.strftime('%H:%M:%S', time.gmtime(duration.removesuffix("s")))
     return duration.removesuffix("s")
