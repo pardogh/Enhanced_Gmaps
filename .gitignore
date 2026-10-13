@@ -8,3 +8,4 @@ pgdata/
 .idea/
 .vscode/
 .tests/data
+.__pycache__

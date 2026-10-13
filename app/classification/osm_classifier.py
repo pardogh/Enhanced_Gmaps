@@ -9,7 +9,7 @@ ASSUMED_ASPHALT_SCORE = 3
 # road_class di Valhalla -> tua categoria di tipo strada
 ROAD_TYPE_MAP: dict[str, str] = {
     "motorway": "highway",
-    "trunk": "highway",
+    "trunk": "extraurban",
     "primary": "extraurban",
     "secondary": "extraurban",
     "tertiary": "rural",
@@ -65,7 +65,7 @@ class OsmRulesClassifier(BaseClassifier):
     def classify(self, segment: ValhallaSegment) -> Optional[ClassifiedSegment]:
         # Segment Class
         road_type = map_road_type(segment.road_class)
-        if segment.road_class is None:
+        if road_type is None:
             return None
 
         # Segment surface
@@ -83,10 +83,12 @@ class OsmRulesClassifier(BaseClassifier):
         confidence = estimate_confidence(segment.surface is not None, road_type)
 
         return ClassifiedSegment(
+            segment=segment,
             road_type=road_type, 
             surface_type=surface_type,
             confidence=confidence,
-            length=segment.length)
+            condition_score=score,
+            source="osm")
       
         # 1. ricava il tipo di strada da segment.road_class
         #    se non riesci -> return None

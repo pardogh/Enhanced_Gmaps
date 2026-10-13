@@ -1,8 +1,5 @@
-import time 
-
 import requests
 from app.models import GoogleMapsRoute
-import googlemaps
 import polyline
 
 from os import getenv
@@ -13,11 +10,10 @@ load_dotenv()
 ROUTES_URL="https://routes.googleapis.com/directions/v2:computeRoutes"
 
 def parse_durationString(duration: str):
-    # Se volessi ottenere direttamente tempo in Ore:Minuti:Secondi -> time.strftime('%H:%M:%S', time.gmtime(duration.removesuffix("s")))
     return duration.removesuffix("s")
     
 
-def get_gmaps_routes(starting_point: str, destination_point: str, avoidTolls: bool) -> dict:
+def call_compute_routes(starting_point: str, destination_point: str, avoidTolls: bool) -> dict:
     
     origin = {
         "address" : starting_point
@@ -59,11 +55,11 @@ def parse_routes(routes_json: dict) -> list[GoogleMapsRoute]:
 
     for route in routes_json.get("routes",[]):
         distance = route["distanceMeters"]
-        duration = parse_durationString(route["duration"])
+        duration = int(float(parse_durationString(route["duration"])))
         poly = route["polyline"]["encodedPolyline"]
         points_list = polyline.decode(poly,precision=5)
 
-        gmaps_routes.append(GoogleMapsRoute(polyline=poly,points_list=points_list,duration_s=duration,distance_meters=distance))
+        gmaps_routes.append(GoogleMapsRoute(polyline=poly,points_list=points_list,duration_s=duration,distance_m=distance))
 
     return gmaps_routes
 

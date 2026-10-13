@@ -1,12 +1,12 @@
 import polyline, hashlib
-from app.models import ValhallaSegment
+from app.models import ValhallaSegment, Coord
 import requests
 from os import getenv
 from dotenv import load_dotenv
 
 load_dotenv()
 
-def make_segment_key(way_id: int, start: tuple[float, float], end: tuple[float, float]) -> str:
+def make_segment_key(way_id: int, start: Coord, end: Coord) -> str:
     a, b = sorted([start, end])
     raw = f"{way_id}|{a[0]:.6f},{a[1]:.6f}|{b[0]:.6f},{b[1]:.6f}"
     return hashlib.sha1(raw.encode()).hexdigest()
@@ -26,7 +26,7 @@ def call_trace_attributes(points: list[tuple[float, float]]) -> dict:
     """Manda i punti a Valhalla e restituisce il JSON grezzo."""
 
     if not points:
-        return None
+        return ValueError
 
     shape=[]
     for lat,lon in points:
@@ -86,6 +86,6 @@ def parse_edges(response: dict) -> list[ValhallaSegment]:
 
     return valhalla_segment_list    
 
-def get_segments(points: list[tuple[float, float]]) -> list[ValhallaSegment]:
+def get_segments(points: list[Coord]) -> list[ValhallaSegment]:
     """Funzione che usa il resto del programma: chiama + traduce."""
     return parse_edges(call_trace_attributes(points))
