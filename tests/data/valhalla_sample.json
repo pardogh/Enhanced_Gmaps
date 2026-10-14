@@ -1,0 +1,25 @@
+{
+  "units": "kilometers",
+  "shape": "atqltA{pjmSaNkh@{Ic\\sJg_@wV{_AsJw^uJc_@eJk_@iIw]wDoQmD}Q{I_e@yVekAkVmjAoD{PeEqR}DcRkDiQy@_F{@kGm@wFk@sGyCgb@aAsN_A_O[oFWqGQiGE{GDa^CsFIiGU_GY}Fi@_Hs@cHuAmM",
+  "edges": [
+    {
+      "way_id": 89368707,
+      "surface": "paved_smooth",
+      "end_shape_index": 8,
+      "begin_shape_index": 0,
+      "road_class": "tertiary",
+      "length": 0.417,
+      "source_percent_along": 0.596
+    },
+    {
+      "way_id": 89368707,
+      "surface": "paved_smooth",
+      "end_shape_index": 36,
+      "begin_shape_index": 8,
+      "road_class": "tertiary",
+      "length": 0.707,
+      "target_percent_along": 0.93
+    }
+  ],
+  "alternate_paths": []
+}

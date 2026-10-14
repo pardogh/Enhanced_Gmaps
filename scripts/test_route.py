@@ -11,7 +11,7 @@ from app.services.valhalla_client import call_trace_attributes, parse_edges
 from app.classification.osm_classifier import OsmRulesClassifier
 
 # Sostituisci con 2-3 punti presi da Google Maps (clic destro -> coordinate)
-POINTS = [(44.4949, 11.3426), (44.5000, 11.3500)]
+POINTS = [(44.7871, 10.7210), (44.7907, 10.7342)]
 SAMPLE = Path("tests/data/valhalla_sample.json")
 
 

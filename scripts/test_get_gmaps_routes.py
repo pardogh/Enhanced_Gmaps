@@ -3,15 +3,15 @@ from pathlib import Path
 import requests
 import json
 
-STARTING_POINT="Correggio, Italy"
-DESTINATION_POINT="Predappio, Italy"
+STARTING_POINT="Centro Commerciale I petali, Reggio Emilia"
+DESTINATION_POINT="Fabbrico, Reggio Emilia"
 
 SAMPLE = Path("tests/data/routes_api_sample.json")
 
 
 def main():
     try:
-        response = google_client.get_gmaps_routes(STARTING_POINT,DESTINATION_POINT,True)
+        response = google_client.call_compute_routes(STARTING_POINT,DESTINATION_POINT,True)
     except requests.HTTPError as e:
         print("Errore HTTPS da Google:", e.response.status_code)
         print(e.response.text)
@@ -23,7 +23,6 @@ def main():
     SAMPLE.parent.mkdir(parents=True, exist_ok=True)
     SAMPLE.write_text(json.dumps(response, indent=2))
     print("Risposta salvata in", SAMPLE)
-
 
 
 if __name__ == "__main__":

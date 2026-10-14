@@ -1,10 +1,6 @@
 from app.models import ValhallaSegment, ClassifiedSegment
 from app.classification.base import BaseClassifier
-import hashlib, polyline
-
-from typing import Optional, Union
-
-ASSUMED_ASPHALT_SCORE = 3
+from typing import Optional
 
 # road_class di Valhalla -> tua categoria di tipo strada
 ROAD_TYPE_MAP: dict[str, str] = {
@@ -17,14 +13,14 @@ ROAD_TYPE_MAP: dict[str, str] = {
     "residential": "urban"
 }
 
-# surface di Valhalla -> (tua categoria di superficie, punteggio base 1-5)
-SURFACE_MAP: dict[str, tuple[str, int]] = {
-    "paved_smooth": ("asphalt", 5),
-    "paved": ("asphalt", 4),
-    "paved_rough": ("unknown_paved", 2),
-    "compacted": ("dirt", 2),
-    "gravel" :("dirt", 2),
-    "dirt": ("dirt", 1),
+# surface di Valhalla -> tua categoria di superficie (senza punteggio)
+SURFACE_MAP: dict[str, str] = {
+    "paved_smooth": "asphalt",
+    "paved": "asphalt",
+    "paved_rough": "unknown_paved",
+    "compacted": "dirt",
+    "gravel": "dirt",
+    "dirt": "dirt",
 }
 
 # Strade dove, senza tag surface, puoi assumere asfalto senza troppi dubbi
@@ -33,54 +29,72 @@ ASSUME_PAVED_ROAD_CLASSES: set[str] = { "highway", "extraurban", "urban" }
 # --- 2. FUNZIONI PURE (niente DB, niente rete) ---
 
 def map_road_type(road_class: str | None) -> Optional[str]:
-    """Traduce road_class di Valhalla nella tua categoria.
-    Restituisce None se il valore è assente o sconosciuto."""
+    """Traduce road_class di Valhalla nella tua categoria."""
     return ROAD_TYPE_MAP.get(road_class)
 
-
-def map_surface(surface: str | None) -> Optional[tuple[str, int]]:
-    """Traduce surface di Valhalla in (categoria, punteggio base).
-    Restituisce None se il valore è assente o sconosciuto."""
+def map_surface(surface: str | None) -> Optional[str]:
+    """Traduce surface di Valhalla nella tua categoria di materiale."""
     return SURFACE_MAP.get(surface)
 
+def calculate_score_and_confidence(valhalla_surface: str | None, surface_type: str, road_type: str) -> tuple[int, float]:
+    """Incrocia il materiale e il tipo di strada per dedurre voto e confidenza."""
+    
+    # Caso 1: Superficie palesemente rovinata o non asfaltata
+    if surface_type in ["dirt", "unknown_paved"]:
+        # Se OSM specifica che è sterrata, la confidenza è buona
+        if valhalla_surface == "dirt": 
+            return 1, 0.8
+        return 2, 0.8
 
-def estimate_confidence(has_explicit_surface: bool, road_type: Optional[str]) -> float:
-    match road_type:
-        case "highway":
-            return 0.9
-        case "extraurban":
-            return 0.8 if has_explicit_surface else 0.6
-        case "rural":
-            return 0.6 if has_explicit_surface else 0.3
-        case "urban":
-            return 0.8 if has_explicit_surface else 0.4
-        case _:
-            return 0.0
+    # Caso 2: Superficie asfaltata esplicitamente dichiarata da OSM
+    if valhalla_surface in ["paved_smooth", "paved"]:
+        match road_type:
+            case "highway":
+                return 5, 0.9
+            case "extraurban":
+                return 4, 0.8
+            case "urban":
+                return 3, 0.6
+            case "rural":
+                return 2, 0.4 
 
+    # Caso 3: Superficie non dichiarata, ma assunta (es. autostrada senza tag surface)
+    if valhalla_surface is None:
+        match road_type:
+            case "highway":
+                return 4, 0.6
+            case "extraurban":
+                return 3, 0.5
+            case "urban":
+                return 3, 0.4
+            case "rural":
+                return 2, 0.3
+
+    return 2, 0.3
 
 # --- 3. IL CLASSIFICATORE ---
 
 class OsmRulesClassifier(BaseClassifier):
 
     def classify(self, segment: ValhallaSegment) -> Optional[ClassifiedSegment]:
-        # Segment Class
+        # 1. Ricava il tipo di strada
         road_type = map_road_type(segment.road_class)
         if road_type is None:
             return None
 
-        # Segment surface
-       
-        if segment.surface is not None:
-            mapped = map_surface(segment.surface)
-            if mapped is None:
+        # 2. Ricava o assumi la superficie
+        valhalla_surface = segment.surface
+        if valhalla_surface is not None:
+            surface_type = map_surface(valhalla_surface)
+            if surface_type is None:
                 return None
-            surface_type, score = mapped
         elif road_type in ASSUME_PAVED_ROAD_CLASSES:
-            surface_type, score = "asphalt", ASSUMED_ASPHALT_SCORE
+            surface_type = "asphalt"
         else:
             return None
 
-        confidence = estimate_confidence(segment.surface is not None, road_type)
+        # 3. Calcola punteggio e confidenza con la matrice incrociata
+        score, confidence = calculate_score_and_confidence(valhalla_surface, surface_type, road_type)
 
         return ClassifiedSegment(
             segment=segment,
@@ -88,18 +102,5 @@ class OsmRulesClassifier(BaseClassifier):
             surface_type=surface_type,
             confidence=confidence,
             condition_score=score,
-            source="osm")
-      
-        # 1. ricava il tipo di strada da segment.road_class
-        #    se non riesci -> return None
-        #
-        # 2. prova a ricavare la superficie da segment.surface
-        #    - se esiste: usala, confidenza alta
-        #    - se manca: la strada è in ASSUME_PAVED_ROAD_CLASSES?
-        #         sì -> assumi asfalto, confidenza media/bassa
-        #         no -> return None (lo deciderà l'AI)
-        #
-        # 3. eventuali aggiustamenti al punteggio (per esempio il tipo
-        #    di strada o la lunghezza del segmento), se vuoi
-        #
-        # 4. costruisci e restituisci ClassificationResult(source="osm", ...)
+            source="osm"
+        )
