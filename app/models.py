@@ -1,5 +1,10 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import Optional
+
 Coord = tuple[float, float]
+SegmentTuple = tuple["ValhallaSegment",Optional["ClassifiedSegment"]]
 
 @dataclass
 class ValhallaSegment:
@@ -40,3 +45,4 @@ class RouteSummary:
     critical_m: float                # metri con voto <= soglia
     unrated_m: float                 # metri senza giudizio
     pairs: list[tuple[ValhallaSegment, ClassifiedSegment | None]]  # per la mappa, più avanti
+
