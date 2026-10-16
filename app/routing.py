@@ -6,10 +6,17 @@ from math import inf
 
 CRITICAL_SCORE_THRESHOLD = 2
 MAX_CONFIDENCE_FOR_AI = 0.4
+
 MIN_CUMULATIVE_DISTANCE_PER_ROAD_TYPE = {
     "rural" : 500, 
     "extraurban" : 1000,
     "urban" : 700
+}
+
+SAMPLE_INTERVAL_PER_ROAD_TYPE = {
+    "rural": 800,       # 1 foto ogni 800m
+    "extraurban": 1500, # 1 foto ogni 1.5km
+    "urban": 400        # 1 foto ogni 400m
 }
 
 def summarize(
@@ -76,7 +83,7 @@ def filter_road_chunks_for_ai(classified_segments: list[ClassifiedSegment]) -> l
 
     for seg in classified_segments:
         if current_road_type and current_road_type != seg.road_type:
-            weighted_average =  current_weighted_score / current_cumulative_distance
+            if current_cumulative_distance > 0 : weighted_average =  current_weighted_score / current_cumulative_distance
             if current_cumulative_distance >= MIN_CUMULATIVE_DISTANCE_PER_ROAD_TYPE.get(current_road_type,inf) and weighted_average <= 2.5:
                 chunk = SegmentsChunk(road_type=current_road_type, length=current_cumulative_distance, avg_score=weighted_average,segments=current_segments_list.copy())
                 chunks.append(chunk)
@@ -98,13 +105,38 @@ def filter_road_chunks_for_ai(classified_segments: list[ClassifiedSegment]) -> l
         if current_cumulative_distance >= MIN_CUMULATIVE_DISTANCE_PER_ROAD_TYPE.get(current_road_type,inf) and weighted_average <= 2.5:
             chunk = SegmentsChunk(road_type=current_road_type, length=current_cumulative_distance, avg_score=weighted_average,segments=current_segments_list.copy())
             chunks.append(chunk)
-
             
-    return chunks     
-    #TODO : Ricordati che le coordinate di inizio e fine segmento le trovi in valhallaSegment(coord[0] e coord[len(coord) - 1])
-    #TODO: Creare sistema riconoscimento chunk per AI
+    return chunks
 
-    
+
+def get_sample_points_from_chunk(chunk: SegmentsChunk) -> list[Coord]:
+    """Extract coordinates from chunks that will be given to vision ai for segment classification"""
+    points_number = max(chunk.length // SAMPLE_INTERVAL_PER_ROAD_TYPE[chunk.road_type], 1)
+    cumulative_lenght_from_start = 0 
+
+    coordinates_list = []
+
+    if(points_number == 1):
+        #chunk shorter than distance hit rate for his road_type
+        for seg in chunk.segments:
+            cumulative_lenght_from_start += seg.segment.length
+
+            if(cumulative_lenght_from_start >= chunk.length / 2):
+                segment_coords_list_size = len(seg.segment.coords)
+                coordinates_list.append(seg.segment.coords[segment_coords_list_size // 2]) #Extracts the coordinate in the middle of the segment coordinates array
+                break
+    else:
+        #chunk longer than distance hit rate for his road_type 
+        for seg in chunk.segments:
+            cumulative_lenght_from_start += seg.segment.length 
+
+            if(cumulative_lenght_from_start >= SAMPLE_INTERVAL_PER_ROAD_TYPE[chunk.road_type]):
+                segment_coords_list_size = len(seg.segment.coords)
+                coordinates_list.append(seg.segment.coords[segment_coords_list_size // 2])  
+                cumulative_lenght_from_start = 0
+
+    return coordinates_list
+
 
 def analyze_route(route: GoogleMapsRoute) -> RouteSummary:
     """Analizza UNA route: Valhalla -> classificazione -> summarize."""

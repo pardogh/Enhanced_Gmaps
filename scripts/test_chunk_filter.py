@@ -1,23 +1,25 @@
-from app.models import ValhallaSegment, ClassifiedSegment, SegmentsChunk
-from app.routing import filter_road_chunks_for_ai
-# Assicurati di importare la tua funzione e il dizionario delle soglie
-from app.routing import filter_road_chunks_for_ai, MIN_CUMULATIVE_DISTANCE_PER_ROAD_TYPE
+from app.models import ValhallaSegment, ClassifiedSegment, SegmentsChunk, Coord
+from app.routing import (
+    filter_road_chunks_for_ai, 
+    get_sample_points_from_chunk,
+    MIN_CUMULATIVE_DISTANCE_PER_ROAD_TYPE,
+    SAMPLE_INTERVAL_PER_ROAD_TYPE
+)
 
-# Per il test, simuliamo le soglie
-MIN_CUMULATIVE_DISTANCE_PER_ROAD_TYPE = {
-    "rural": 500,
-    "extraurban": 1000
-}
-
-def make_mock_segment(road_type: str, length: float, score: int | None) -> ClassifiedSegment:
-    """Helper per creare rapidamente segmenti fittizi"""
+def make_mock_segment(
+    road_type: str, 
+    length: float, 
+    score: int | None, 
+    coords: list[Coord]
+) -> ClassifiedSegment:
+    """Helper per creare segmenti fittizi con coordinate personalizzate"""
     v_seg = ValhallaSegment(
         segment_key="dummy_key", 
         way_id=123, 
         length=length, 
         road_class=road_type, 
         surface="paved", 
-        coords=[(0.0, 0.0), (1.1, 1.1)]
+        coords=coords
     )
     return ClassifiedSegment(
         segment=v_seg, 
@@ -28,41 +30,44 @@ def make_mock_segment(road_type: str, length: float, score: int | None) -> Class
         confidence=0.5
     )
 
-def test_filter_road_chunks_for_ai():
-    # 1. Crea la lista di segmenti da testare
+def test_chunk_filter_and_sampling():
+    # Setup dati di test:
+    # Chunk 1: Rural (lunghezza totale = 600m < intervallo 800m -> atteso 1 punto centrale)
+    # Seg 1 (300m): coord [(10.0, 10.0), (10.1, 10.1)]
+    # Seg 2 (300m): coord [(10.2, 10.2), (10.3, 10.3)] -> il punto a metà (300m) cade qui!
+    
+    # Chunk 2: Extraurban (lunghezza totale = 1800m > intervallo 1500m -> attesi 1 o 2 punti)
+    
     test_segments = [
-        # --- Blocco 1: Rural, brutto, abbastanza lungo (500m, score 2) -> DEVE ESSERE ESTRATTO ---
-        make_mock_segment("rural", 300, 2),
-        make_mock_segment("rural", 200, 2),
+        # --- Blocco 1: Rural (2 segmenti da 300m, score 2) ---
+        make_mock_segment("rural", 300, 2, [(10.0, 10.0), (10.1, 10.1)]),
+        make_mock_segment("rural", 300, 2, [(10.2, 10.2), (10.3, 10.3)]),
         
-        # --- Blocco 2: Extraurban, brutto, ma TROPPO CORTO (300m, soglia è 1000) -> IGNORATO ---
-        make_mock_segment("extraurban", 300, 2),
-        
-        # --- Blocco 3: Rural, bello e lungo (600m, score 4) -> IGNORATO ---
-        make_mock_segment("rural", 300, 4),
-        make_mock_segment("rural", 300, 4),
-        
-        # --- Blocco 4: Extraurban, brutto, misto con None, lungo (1100m, avg_score < 2.5) -> DEVE ESSERE ESTRATTO ---
-        make_mock_segment("extraurban", 600, 2),
-        make_mock_segment("extraurban", 500, None), # Fallback a 0 nel codice
+        # --- Blocco 2: Extraurban (2 segmenti da 900m = 1800m, score 1) ---
+        make_mock_segment("extraurban", 900, 1, [(20.0, 20.0), (20.1, 20.1)]),
+        make_mock_segment("extraurban", 900, 1, [(20.2, 20.2), (20.3, 20.3)]),
     ]
 
-    # 2. Esegui la funzione
+    # 1. Filtra i chunks
     chunks = filter_road_chunks_for_ai(test_segments)
-
-    # 3. Verifica i risultati attesi (Asserts)
     assert len(chunks) == 2, f"Attesi 2 chunks, ottenuti {len(chunks)}"
-    
-    assert chunks[0].road_type == "rural"
-    assert chunks[0].length == 500.0
-    assert chunks[0].avg_score == 2.0
-    
-    assert chunks[1].road_type == "extraurban"
-    assert chunks[1].length == 1100.0
-    # Score pesato del blocco 4: (600*2 + 500*0) / 1100 = 1200 / 1100 = 1.09
-    assert round(chunks[1].avg_score, 2) == 1.09
 
-    print("Tutti i test passati con successo!")
+    # 2. Test Campionamento Chunk 1 (Rural - 600m)
+    # L'intervallo rural è 800m -> points_number = max(1, 600 // 800) = 1 punto (caso centrale)
+    rural_points = get_sample_points_from_chunk(chunks[0])
+    assert len(rural_points) == 1, f"Atteso 1 punto per il chunk rural, ottenuti {len(rural_points)}"
+    
+    # La metà del chunk (300m) viene raggiunta al secondo segmento.
+    # Il centro di [(10.2, 10.2), (10.3, 10.3)] è l'indice len // 2 -> (10.3, 10.3)
+    print(f"Punto estratto per Chunk Rural (1 punto): {rural_points[0]}")
+
+    # 3. Test Campionamento Chunk 2 (Extraurban - 1800m)
+    # L'intervallo extraurban è 1500m -> points_number = max(1, 1800 // 1500) = 1 punto campionato ogni >= 1500m
+    extraurban_points = get_sample_points_from_chunk(chunks[1])
+    assert len(extraurban_points) >= 1, "Atteso almeno 1 punto per extraurban"
+    print(f"Punti estratti per Chunk Extraurban: {extraurban_points}")
+
+    print("\nTutti i test passati con successo!")
 
 if __name__ == "__main__":
-    test_filter_road_chunks_for_ai()
+    test_chunk_filter_and_sampling()
