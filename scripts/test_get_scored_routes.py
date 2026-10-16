@@ -19,13 +19,13 @@ def main():
         for gmaps_routes in lista:
             summarized_route = routing.analyze_route(gmaps_routes)
 
-            """segments = get_segments(gmaps_routes.points_list)
+            segments = get_segments(gmaps_routes.points_list)
 
             print(Counter(s.surface for s in segments))
             print(Counter(s.road_class for s in segments))
 
             for s in segments:
-                print(s.way_id)"""
+                print(s.way_id)
             
             text = f"""
                 Duration in seconds: {summarized_route.duration_s} s
@@ -39,7 +39,7 @@ def main():
             """
 
             print(text)
-            
+            break
 
     
 if __name__=="__main__":

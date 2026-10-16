@@ -1,12 +1,19 @@
-from app.models import ClassifiedSegment, RouteSummary, GoogleMapsRoute, ValhallaSegment
+from app.models import *
 from app.services.google_client import call_compute_routes,parse_routes
 from app.classification.osm_classifier import OsmRulesClassifier
 from app.services.valhalla_client import get_segments
+from math import inf
 
 CRITICAL_SCORE_THRESHOLD = 2
+MAX_CONFIDENCE_FOR_AI = 0.4
+MIN_CUMULATIVE_DISTANCE_PER_ROAD_TYPE = {
+    "rural" : 500, 
+    "extraurban" : 1000,
+    "urban" : 700
+}
 
 def summarize(
-    pairs: list[tuple[ValhallaSegment, ClassifiedSegment | None]],
+    pairs: list[SegmentTuple],
     route: GoogleMapsRoute,
 ) -> RouteSummary:
     """Summarize route"""
@@ -45,7 +52,59 @@ def summarize(
 
     return RouteSummary(polyline=route.polyline, distance_m=route.distance_m, duration_s=route.duration_s, quality_score=quality_score, coverage=coverage, distance_by_road_type=meters_by_road_type, distance_by_surface=meters_by_road_surface, critical_m=total_critical_meters, unrated_m=total_non_classified_meters, pairs=pairs)
         
+def filter_segments_for_ai(pairs: list[SegmentTuple]) -> list[ClassifiedSegment]:
+    #This function will select betweeen all road segments those that will need to be analyzed by AI
+    segments_to_analyze = []
 
+    for val_seg, class_seg in pairs:
+        if(class_seg is None):
+            continue
+
+        if(class_seg.condition_score <= CRITICAL_SCORE_THRESHOLD or class_seg.confidence <= MAX_CONFIDENCE_FOR_AI):
+            segments_to_analyze.append(class_seg)
+
+    return segments_to_analyze 
+
+def filter_road_chunks_for_ai(classified_segments: list[ClassifiedSegment]) -> list[SegmentsChunk]:
+    """Defines which series of route segments needs to be analyzed with AI"""
+    current_road_type = ""
+    current_cumulative_distance = 0.0
+    current_weighted_score = 0.0
+    current_segments_list = []
+
+    chunks = []
+
+    for seg in classified_segments:
+        if current_road_type and current_road_type != seg.road_type:
+            weighted_average =  current_weighted_score / current_cumulative_distance
+            if current_cumulative_distance >= MIN_CUMULATIVE_DISTANCE_PER_ROAD_TYPE.get(current_road_type,inf) and weighted_average <= 2.5:
+                chunk = SegmentsChunk(road_type=current_road_type, length=current_cumulative_distance, avg_score=weighted_average,segments=current_segments_list.copy())
+                chunks.append(chunk)
+
+            current_cumulative_distance = 0.0
+            current_weighted_score = 0.0
+            current_segments_list.clear()
+            current_road_type = ""
+        
+        current_road_type = seg.road_type 
+        current_cumulative_distance += seg.segment.length
+        current_segments_list.append(seg)
+
+        score = seg.condition_score if seg.condition_score is not None else 0
+        current_weighted_score += score * seg.segment.length
+
+    if current_road_type:
+        weighted_average = current_weighted_score / current_cumulative_distance
+        if current_cumulative_distance >= MIN_CUMULATIVE_DISTANCE_PER_ROAD_TYPE.get(current_road_type,inf) and weighted_average <= 2.5:
+            chunk = SegmentsChunk(road_type=current_road_type, length=current_cumulative_distance, avg_score=weighted_average,segments=current_segments_list.copy())
+            chunks.append(chunk)
+
+            
+    return chunks     
+    #TODO : Ricordati che le coordinate di inizio e fine segmento le trovi in valhallaSegment(coord[0] e coord[len(coord) - 1])
+    #TODO: Creare sistema riconoscimento chunk per AI
+
+    
 
 def analyze_route(route: GoogleMapsRoute) -> RouteSummary:
     """Analizza UNA route: Valhalla -> classificazione -> summarize."""

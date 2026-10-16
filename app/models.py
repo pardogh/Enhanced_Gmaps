@@ -46,3 +46,10 @@ class RouteSummary:
     unrated_m: float                 # metri senza giudizio
     pairs: list[tuple[ValhallaSegment, ClassifiedSegment | None]]  # per la mappa, più avanti
 
+@dataclass 
+class SegmentsChunk:
+    road_type: str 
+    length: float 
+    avg_score: float 
+    segments: list[ClassifiedSegment]
+
